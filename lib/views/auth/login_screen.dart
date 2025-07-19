@@ -25,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (user != null) {
-        // ✅ Load preferences after login
         final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
         await themeProvider.loadFromFirestore();
 

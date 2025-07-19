@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobile_final/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../auth/login_screen.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -60,7 +62,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
     if (mounted) {
-      Navigator.pushReplacementNamed(context, '/');
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+            (Route<dynamic> route) => false,
+      );
     }
   }
 

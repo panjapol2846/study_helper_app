@@ -71,7 +71,7 @@ class _DeckListScreenState extends State<DeckListScreen> {
         .collection('users')
         .doc(userId)
         .collection('flashcardDecks')
-        .orderBy('updatedAt', descending: true);
+        .orderBy('createdAt', descending: true);
 
     return Scaffold(
       appBar: AppBar(title: const Text("My Flashcards")),

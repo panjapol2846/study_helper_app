@@ -39,7 +39,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
         .collection('users')
         .doc(userId)
         .collection('notes')
-        .orderBy('updatedAt', descending: true);
+        .orderBy('createdAt', descending: true);
 
     return Scaffold(
       appBar: AppBar(title: const Text("My Notes")),
