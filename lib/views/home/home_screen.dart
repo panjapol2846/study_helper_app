@@ -11,6 +11,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     final userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
+    final primaryColor = const Color(0xFF4CD964);
+    final buttonTextStyle = const TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+    final theme = Theme.of(context);
 
     return StreamBuilder<DocumentSnapshot>(
       stream: userDocRef.snapshots(),
@@ -25,8 +28,12 @@ class HomeScreen extends StatelessWidget {
         final displayName = userData?['displayName'] ?? 'User';
 
         return Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            elevation: 0,
             automaticallyImplyLeading: false,
+            iconTheme: IconThemeData(color: theme.iconTheme.color),
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings),
@@ -35,56 +42,90 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           body: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  displayName,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    children: [
+                      TextSpan(text: 'STUDY', style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+                      const TextSpan(text: 'SYNC', style: TextStyle(color: Color(0xFF4CD964))),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 30),
-                Center(
-                  child: Column(
-                    children: [
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.note),
-                        label: const Text("My Notes"),
+                const SizedBox(height: 12),
+                Text(
+                  'Welcome, $displayName!',
+                  style: theme.textTheme.titleLarge,
+                ),
+                const SizedBox(height: 48),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.note_alt_outlined, size: 24),
+                        label: Text("My Notes", style: buttonTextStyle),
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const NotesListScreen(),
-                            ),
+                            MaterialPageRoute(builder: (_) => const NotesListScreen()),
                           );
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.black, // consistent for all themes
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.style),
-                        label: const Text("My Flashcards"),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.style, size: 24),
+                        label: Text("My Flashcards", style: buttonTextStyle),
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const DeckListScreen(),
-                            ),
+                            MaterialPageRoute(builder: (_) => const DeckListScreen()),
                           );
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.explore),
-                        label: const Text("Explore"),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.explore, size: 24),
+                        label: Text("Explore", style: buttonTextStyle),
                         onPressed: () {
                           Navigator.pushNamed(context, '/explore');
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),

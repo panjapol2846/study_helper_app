@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_final/core/services/auth_service.dart';
-import 'login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -24,8 +24,6 @@ class _SignupScreenState extends State<SignupScreen> {
       );
 
       if (user != null) {
-
-
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'profile': {
             'email': user.email,
@@ -39,8 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
           'onboardingComplete': false,
         });
 
-        Navigator.pushReplacementNamed(context, '/onboarding');
-
+        Navigator.pushReplacementNamed(context, '/onboarding'); // ✅ Navigation added
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -51,21 +48,82 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Color(0xFF4CD964); // mint green
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Sign Up")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            TextField(controller: emailController, decoration: const InputDecoration(labelText: 'Email')),
-            TextField(controller: passwordController, obscureText: true, decoration: const InputDecoration(labelText: 'Password')),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: _handleSignup, child: const Text("Sign Up")),
-            TextButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen())),
-              child: const Text("Already have an account? Login"),
-            ),
-          ],
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 60),
+              RichText(
+                text: const TextSpan(
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  children: [
+                    TextSpan(text: 'STUDY', style: TextStyle(color: Colors.black)),
+                    TextSpan(text: 'SYNC', style: TextStyle(color: Color(0xFF4CD964))),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 60),
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.email_outlined),
+                  hintText: 'Email',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  hintText: 'Password',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _handleSignup,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'SIGN UP',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Already have an account?"),
+                  TextButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    ),
+                    child: Text(
+                      'Login here',
+                      style: TextStyle(color: primaryColor),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

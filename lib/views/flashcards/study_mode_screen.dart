@@ -93,14 +93,17 @@ class _StudyModeScreenState extends State<StudyModeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     if (_loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (_cards.isEmpty) {
       return Scaffold(
-          appBar: AppBar(title: const Text("Study Mode")),
-          body: const Center(child: Text("This deck has no cards to study.")));
+        appBar: AppBar(title: const Text("Study Mode")),
+        body: const Center(child: Text("This deck has no cards to study.")),
+      );
     }
 
     final currentCard = _cards[_currentIndex];
@@ -108,7 +111,6 @@ class _StudyModeScreenState extends State<StudyModeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Study Mode"),
-        // Shuffle button in the AppBar
         actions: [
           IconButton(
             onPressed: _shuffleCards,
@@ -121,13 +123,11 @@ class _StudyModeScreenState extends State<StudyModeScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // Shows the card index
             Text(
               "Card ${_currentIndex + 1} of ${_cards.length}",
-              style: Theme.of(context).textTheme.titleMedium,
+              style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 20),
-            // The main flashcard view
             GestureDetector(
               onTap: () => setState(() => _showBack = !_showBack),
               child: Container(
@@ -136,18 +136,22 @@ class _StudyModeScreenState extends State<StudyModeScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  color: Colors.blue.shade50,
-                  border: Border.all(color: Colors.blue.shade300),
+                  color: theme.cardColor,
+                  border: Border.all(
+                    color: theme.colorScheme.primary.withOpacity(0.3),
+                  ),
                 ),
                 child: Text(
                   _showBack ? currentCard['back'] : currentCard['front'],
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 24),
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 30),
-            // Row for Back and Next buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -163,8 +167,7 @@ class _StudyModeScreenState extends State<StudyModeScreen> {
                 ),
               ],
             ),
-            const Spacer(), // Pushes the finish button to the bottom
-            // Finish Study Button
+            const Spacer(),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -172,6 +175,10 @@ class _StudyModeScreenState extends State<StudyModeScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red.shade400,
                   foregroundColor: Colors.white,
+                  textStyle: const TextStyle(fontSize: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: const Text("Finish Study"),
               ),
@@ -182,4 +189,5 @@ class _StudyModeScreenState extends State<StudyModeScreen> {
       ),
     );
   }
+
 }

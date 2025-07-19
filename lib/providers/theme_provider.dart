@@ -33,7 +33,7 @@ class ThemeProvider extends ChangeNotifier {
     setFontSize(fontSize);
   }
 
-  // ✅ Load preferences from Firestore
+
   Future<void> loadFromFirestore() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;

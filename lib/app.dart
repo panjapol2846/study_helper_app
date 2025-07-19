@@ -19,9 +19,11 @@ class StudySyncApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'StudySync',
+      debugShowCheckedModeBanner: false,
       themeMode: themeProvider.themeMode,
       theme: ThemeData(
         brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white,
         textTheme: TextTheme(
           bodySmall: TextStyle(fontSize: themeProvider.fontSize),
           bodyMedium: TextStyle(fontSize: themeProvider.fontSize),
@@ -31,15 +33,17 @@ class StudySyncApp extends StatelessWidget {
           titleLarge: TextStyle(fontSize: themeProvider.fontSize),
         ),
       ),
+
       darkTheme: ThemeData(
         brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black,
         textTheme: TextTheme(
-          bodySmall: TextStyle(fontSize: themeProvider.fontSize),
-          bodyMedium: TextStyle(fontSize: themeProvider.fontSize),
-          bodyLarge: TextStyle(fontSize: themeProvider.fontSize),
-          labelLarge: TextStyle(fontSize: themeProvider.fontSize),
-          titleMedium: TextStyle(fontSize: themeProvider.fontSize),
-          titleLarge: TextStyle(fontSize: themeProvider.fontSize),
+          bodySmall: TextStyle(fontSize: themeProvider.fontSize, color: Colors.white38),
+          bodyMedium: TextStyle(fontSize: themeProvider.fontSize, color: Colors.white38),
+          bodyLarge: TextStyle(fontSize: themeProvider.fontSize, color: Colors.white38),
+          labelLarge: TextStyle(fontSize: themeProvider.fontSize, color: Colors.white38),
+          titleMedium: TextStyle(fontSize: themeProvider.fontSize, color: Colors.white38),
+          titleLarge: TextStyle(fontSize: themeProvider.fontSize, color: Colors.white38),
         ),
       ),
       initialRoute: '/',
