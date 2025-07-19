@@ -15,6 +15,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
   final userId = FirebaseAuth.instance.currentUser!.uid;
   Set<String> expandedNoteIds = {};
   String _searchText = '';
+  String _sortBy = 'Latest';
 
   void _toggleExpand(String noteId) {
     setState(() {
@@ -33,32 +34,71 @@ class _NotesListScreenState extends State<NotesListScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final notesRef = FirebaseFirestore.instance
+  Query _getNotesQuery() {
+    final notesCollection = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
-        .collection('notes')
-        .orderBy('createdAt', descending: true);
+        .collection('notes');
 
+    switch (_sortBy) {
+      case 'A-Z':
+        return notesCollection.orderBy('name', descending: false);
+      case 'Z-A':
+        return notesCollection.orderBy('name', descending: true);
+      case 'Oldest':
+        return notesCollection.orderBy('createdAt', descending: false);
+      case 'Latest':
+      default:
+        return notesCollection.orderBy('createdAt', descending: true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("My Notes")),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Search Notes',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) => setState(() => _searchText = value.toLowerCase()),
+            child: Column(
+              children: [
+                TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Search Notes',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) => setState(() => _searchText = value.toLowerCase()),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Text('Sort by: ', style: TextStyle(fontWeight: FontWeight.w500)),
+                    DropdownButton<String>(
+                      value: _sortBy,
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _sortBy = value;
+                          });
+                        }
+                      },
+                      items: const [
+                        DropdownMenuItem(value: 'A-Z', child: Text('A-Z')),
+                        DropdownMenuItem(value: 'Z-A', child: Text('Z-A')),
+                        DropdownMenuItem(value: 'Latest', child: Text('Latest')),
+                        DropdownMenuItem(value: 'Oldest', child: Text('Oldest')),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: notesRef.snapshots(),
+              stream: _getNotesQuery().snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());

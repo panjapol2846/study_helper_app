@@ -15,6 +15,7 @@ class DeckListScreen extends StatefulWidget {
 class _DeckListScreenState extends State<DeckListScreen> {
   final userId = FirebaseAuth.instance.currentUser!.uid;
   String _searchText = '';
+  String _sortBy = 'Latest';
 
   void _showDeckOptions(BuildContext context, String deckId) {
     showModalBottomSheet(
@@ -65,32 +66,69 @@ class _DeckListScreenState extends State<DeckListScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final decksRef = FirebaseFirestore.instance
+  Query _getDecksQuery() {
+    final collection = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
-        .collection('flashcardDecks')
-        .orderBy('createdAt', descending: true);
+        .collection('flashcardDecks');
 
+    switch (_sortBy) {
+      case 'A-Z':
+        return collection.orderBy('name', descending: false);
+      case 'Z-A':
+        return collection.orderBy('name', descending: true);
+      case 'Oldest':
+        return collection.orderBy('createdAt', descending: false);
+      case 'Latest':
+      default:
+        return collection.orderBy('createdAt', descending: true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("My Flashcards")),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Search Decks',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) => setState(() => _searchText = value.toLowerCase()),
+            child: Column(
+              children: [
+                TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Search Decks',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) => setState(() => _searchText = value.toLowerCase()),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Text('Sort by: ', style: TextStyle(fontWeight: FontWeight.w500)),
+                    DropdownButton<String>(
+                      value: _sortBy,
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => _sortBy = value);
+                        }
+                      },
+                      items: const [
+                        DropdownMenuItem(value: 'A-Z', child: Text('A-Z')),
+                        DropdownMenuItem(value: 'Z-A', child: Text('Z-A')),
+                        DropdownMenuItem(value: 'Latest', child: Text('Latest')),
+                        DropdownMenuItem(value: 'Oldest', child: Text('Oldest')),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: decksRef.snapshots(),
+              stream: _getDecksQuery().snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
